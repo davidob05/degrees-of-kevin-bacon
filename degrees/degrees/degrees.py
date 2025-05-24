@@ -87,30 +87,24 @@ def main():
 def shortest_path(source, target):
     frontier = QueueFrontier()
     visited = set()
-    sourceNode = Node()
-    sourceNode.state,sourceNode.parent = source, None
-    initialTuple = (None,sourceNode)
-    frontier.add(initialTuple)
+    sourceNode = Node(state=source,parent=None,action=None)
+    frontier.add(sourceNode)
 
     while not frontier.empty():
         current_node = frontier.remove()
-        neighbors = neighbors_for_person(current_node[1].state)
+        neighbors = neighbors_for_person(current_node.state)
 
         for neighbor in neighbors:
-            neighbor_node = Node()
-            neighbor_node.parent, neighbor_node.state = current_node, neighbor[1]
+            neighbor_node = Node(state=neighbor[1],parent=current_node,action=neighbor[0])
             
-            neighbor_tuple = (neighbor[0],neighbor_node)
 
-            if neighbor[1] == target:
-                result = []
-                result.append(neighbor_tuple)
-                traversal_tuple = neighbor_tuple
-
-                while traversal_tuple[0].parent!= None:
-                    result.append((traversal_tuple[0].parent,traversal_tuple))
-                    traversal_tuple = (traversal_tuple[0].parent, traversal_tuple[0])
-                result = result[::-1]
+            if current_node.state == target:
+                path = []
+                while current_node.parent is not None:
+                    path.append((current_node.action, current_node.state))
+                    current_node = current_node.parent
+                path.reverse()
+                return path
                 
                 
             elif neighbor_node not in visited:
